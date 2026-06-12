@@ -1,0 +1,189 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #d4fbe7, #e8fff4);
+}
+
+/* NAVBAR */
+.navbar {
+  height: 60px;
+  background: linear-gradient(90deg, #1b7f5a, #2ecc71);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 25px;
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.nav-title {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.nav-links span {
+  margin-left: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  opacity: 0.9;
+}
+
+.nav-links span:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+/* MAIN LAYOUT */
+.control-center {
+  min-height: calc(100vh - 60px);
+}
+
+.tab-navigation {
+  background: white;
+  padding: 15px 25px;
+  display: flex;
+  gap: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tab-btn {
+  padding: 12px 24px;
+  border: 2px solid transparent;
+  background: #f0f0f0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s;
+  color: #555;
+}
+
+.tab-btn:hover {
+  background: #e0e0e0;
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: #667eea;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 25px;
+}
+
+/* PANELS */
+.left-panel,
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* CARDS */
+.card {
+  background: linear-gradient(180deg, #ffffff, #f0fff8);
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0px 2px 10px rgba(20, 120, 80, 0.15);
+  border-left: 5px solid #2ecc71;
+}
+
+/* RFP INBOX */
+.rfp-item {
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  transition: 0.2s;
+}
+
+.rfp-item:hover {
+  background: #d1fae5;
+  transform: scale(1.01);
+}
+
+/* STATUS BADGES */
+.badge {
+  float: right;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.badge.uploaded {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.badge.analyzing {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge.completed {
+  background: #dcfce7;
+  color: #14532d;
+}
+
+/* CHAT */
+.chat-box {
+  height: 220px;
+  overflow-y: auto;
+  background: #ecfdf5;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 6px;
+}
+
+.user {
+  text-align: right;
+  color: #065f46;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.agent {
+  text-align: left;
+  color: #064e3b;
+  margin-bottom: 6px;
+}
+
+input {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #a7f3d0;
+  outline: none;
+}
+
+/* BUTTONS */
+button {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  border: none;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 6px;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: linear-gradient(135deg, #15803d, #16a34a);
+}
+
+/* PROPOSAL PREVIEW */
+.proposal-box {
+  border: 1px solid #a7f3d0;
+  border-radius: 8px;
+  padding: 12px;
+  background: white;
+  max-height: 300px;
+  overflow-y: auto;
+}
