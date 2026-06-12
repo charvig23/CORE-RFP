@@ -68,11 +68,11 @@
 
 | File | Location | Purpose |
 |------|----------|---------|
-| **IMPLEMENTATION_SUMMARY.md** | Root | What was built |
-| **SKU_INTEGRATION_README.md** | Root | Quick reference |
-| **SKU_MATCHING_GUIDE.md** | Root | Detailed guide |
-| **ARCHITECTURE_DIAGRAM.md** | Root | Visual diagrams |
-| **DOCUMENTATION_INDEX.md** | Root | This file |
+| **[IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)** | docs/ | What was built |
+| **[SKU_INTEGRATION_README.md](SKU_INTEGRATION_README.md)** | docs/ | Quick reference |
+| **[SKU_MATCHING_GUIDE.md](SKU_MATCHING_GUIDE.md)** | docs/ | Detailed guide |
+| **[ARCHITECTURE_DIAGRAM.md](ARCHITECTURE_DIAGRAM.md)** | docs/ | Visual diagrams |
+| **README.md** | docs/ | This file |
 
 ---
 

@@ -66,9 +66,9 @@ sequenceDiagram
 ```text
 R2/
   C.O.R.E/         React app
-  agentSystem/     FastAPI app, agent logic, database models, docs
+  agentSystem/     FastAPI app, agent logic, database models
   BackendCodes/    Flask SKU and PDF service
-  *.md             Architecture, workflow, and implementation guides
+  docs/            Architecture, workflow, and implementation guides
 ```
 
 ## Quick Start
@@ -186,14 +186,9 @@ npm start
 
 ## Further Reading
 
-- `ARCHITECTURE_DIAGRAM.md`
-- `WORKFLOW_IMPLEMENTATION_GUIDE.md`
-- `FRONTEND_INTEGRATION_GUIDE.md`
-- `RFP_UPLOAD_GUIDE.md`
-- `SKU_MATCHING_GUIDE.md`
-- `PROGRESS_TRACKING_GUIDE.md`
-- `agentSystem/README.md`
-- `agentSystem/API_GUIDE.md`
+- [`docs/README.md`](docs/README.md) - full documentation index and long-form guides
+- [`agentSystem/README.md`](agentSystem/README.md) - backend overview
+- [`agentSystem/API_GUIDE.md`](agentSystem/API_GUIDE.md) - API details for the orchestration service
 
 ## GitHub Upload
 
