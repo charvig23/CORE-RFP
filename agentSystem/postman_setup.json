@@ -1,0 +1,191 @@
+{
+  "info": {
+    "name": "Agent System Setup - Postman Requests",
+    "description": "Complete setup via Postman API calls"
+  },
+  "tools": [
+    {
+      "name": "extract_sales_objectives",
+      "description": "Extract sales objectives and requirements from RFP text",
+      "tool_type": "function",
+      "code": "def extract_sales_objectives(rfp_text: str):\n    return {\"status\": \"extracted\", \"note\": \"LLM will extract objectives from the text\"}",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "rfp_text": {
+            "type": "string",
+            "description": "The RFP content to analyze"
+          }
+        },
+        "required": ["rfp_text"]
+      }
+    },
+    {
+      "name": "match_sku_from_csv",
+      "description": "Match product SKUs from CSV file based on requirements. This tool will call external API deployed on Render.",
+      "tool_type": "api",
+      "code": "https://your-render-service.onrender.com/api/match-sku",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "requirements": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of product requirements to match"
+          },
+          "csv_file_url": {
+            "type": "string",
+            "description": "URL or path to the CSV file containing SKU data"
+          }
+        },
+        "required": ["requirements"]
+      }
+    },
+    {
+      "name": "validate_sku",
+      "description": "Validate SKU exists and get details",
+      "tool_type": "api",
+      "code": "https://your-render-service.onrender.com/api/validate-sku",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "sku_code": {
+            "type": "string",
+            "description": "The SKU code to validate"
+          }
+        },
+        "required": ["sku_code"]
+      }
+    },
+    {
+      "name": "generate_pricing_table",
+      "description": "Generate pricing table for matched SKUs. Calls external API for pricing calculation.",
+      "tool_type": "api",
+      "code": "https://your-render-service.onrender.com/api/generate-pricing",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "skus": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "sku_code": {
+                  "type": "string"
+                },
+                "quantity": {
+                  "type": "integer"
+                }
+              }
+            },
+            "description": "List of SKUs with quantities"
+          },
+          "discount_rate": {
+            "type": "number",
+            "description": "Discount percentage to apply"
+          }
+        },
+        "required": ["skus"]
+      }
+    },
+    {
+      "name": "calculate_total_cost",
+      "description": "Calculate total cost with taxes and discounts",
+      "tool_type": "function",
+      "code": "def calculate_total_cost(items: list, tax_rate: float = 0.18, discount: float = 0):\n    subtotal = sum(item.get('price', 0) * item.get('quantity', 1) for item in items)\n    discount_amount = subtotal * (discount / 100)\n    after_discount = subtotal - discount_amount\n    tax = after_discount * tax_rate\n    total = after_discount + tax\n    return {\"subtotal\": subtotal, \"discount\": discount_amount, \"tax\": tax, \"total\": total}",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "List of items with price and quantity"
+          },
+          "tax_rate": {
+            "type": "number",
+            "description": "Tax rate (default 0.18 for 18%)"
+          },
+          "discount": {
+            "type": "number",
+            "description": "Discount percentage"
+          }
+        },
+        "required": ["items"]
+      }
+    },
+    {
+      "name": "format_proposal_html",
+      "description": "Format proposal content as HTML document",
+      "tool_type": "function",
+      "code": "def format_proposal_html(title: str, sections: dict):\n    html = f'<!DOCTYPE html><html><head><title>{title}</title><style>body{{font-family: Arial, sans-serif; margin: 40px;}}h1{{color: #2c3e50;}}h2{{color: #34495e; border-bottom: 2px solid #3498db; padding-bottom: 10px;}}table{{border-collapse: collapse; width: 100%; margin: 20px 0;}}th, td{{border: 1px solid #ddd; padding: 12px; text-align: left;}}th{{background-color: #3498db; color: white;}}.summary{{background-color: #ecf0f1; padding: 20px; margin: 20px 0;}}</style></head><body><h1>{title}</h1>'\n    for section_name, section_content in sections.items():\n        html += f'<h2>{section_name}</h2><div>{section_content}</div>'\n    html += '</body></html>'\n    return html",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Proposal title"
+          },
+          "sections": {
+            "type": "object",
+            "description": "Dictionary of section names and content"
+          }
+        },
+        "required": ["title", "sections"]
+      }
+    },
+    {
+      "name": "generate_pdf_proposal",
+      "description": "Generate PDF from proposal content. Calls external API.",
+      "tool_type": "api",
+      "code": "https://your-render-service.onrender.com/api/generate-pdf",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "html_content": {
+            "type": "string",
+            "description": "HTML content to convert to PDF"
+          },
+          "filename": {
+            "type": "string",
+            "description": "Output PDF filename"
+          }
+        },
+        "required": ["html_content"]
+      }
+    }
+  ],
+  "agents": [
+    {
+      "name": "sales_agent",
+      "role": "sales",
+      "system_prompt": "You are a Sales Agent specialized in analyzing RFP documents.\n\nYour responsibilities:\n1. Extract key sales objectives and requirements from RFP content\n2. Identify customer needs, pain points, and desired outcomes\n3. Summarize the scope of work and deliverables expected\n4. Extract budget constraints if mentioned\n5. Identify decision-makers and stakeholders\n6. Note any compliance or regulatory requirements\n\nOutput Format: Return a structured JSON with:\n- objectives: List of main objectives\n- requirements: List of technical and business requirements\n- scope: Summary of scope\n- budget_info: Any budget-related information\n- stakeholders: List of key stakeholders\n- compliance: Any compliance requirements\n\nBe thorough and extract all relevant information for downstream agents.",
+      "model": "gemini-2.5-flash",
+      "tool_ids": []
+    },
+    {
+      "name": "technical_agent",
+      "role": "technical",
+      "system_prompt": "You are a Technical Agent specialized in SKU matching and product selection.\n\nYour responsibilities:\n1. Analyze technical requirements from the sales summary\n2. Match requirements to available SKUs using the CSV database\n3. Validate SKU availability and specifications\n4. Ensure selected products meet all technical requirements\n5. Provide alternative options if exact matches aren't available\n6. Include quantity recommendations\n\nOutput Format: Return a structured JSON with:\n- matched_skus: List of matched SKU codes with details\n  - sku_code: The product SKU\n  - product_name: Product name\n  - specifications: Key specs\n  - quantity: Recommended quantity\n  - match_confidence: How well it matches requirements (high/medium/low)\n- alternatives: List of alternative SKUs if applicable\n- notes: Any technical considerations or limitations\n\nUse the match_sku_from_csv and validate_sku tools to find and verify products.",
+      "model": "gemini-2.5-flash",
+      "tool_ids": []
+    },
+    {
+      "name": "pricing_agent",
+      "role": "pricing",
+      "system_prompt": "You are a Pricing Agent specialized in generating accurate pricing tables.\n\nYour responsibilities:\n1. Take matched SKUs from the technical agent\n2. Generate comprehensive pricing table with unit prices\n3. Calculate subtotals, discounts, taxes\n4. Apply business rules for volume discounts\n5. Include payment terms and conditions\n6. Ensure pricing is competitive and accurate\n\nOutput Format: Return a structured JSON with:\n- pricing_table: List of items with:\n  - sku_code: Product SKU\n  - product_name: Product name\n  - quantity: Quantity\n  - unit_price: Price per unit\n  - subtotal: Line item total\n- summary:\n  - subtotal: Total before discount\n  - discount: Discount amount\n  - tax: Tax amount\n  - grand_total: Final total\n- payment_terms: Payment terms and conditions\n- validity: Quote validity period\n\nUse generate_pricing_table and calculate_total_cost tools for pricing calculations.",
+      "model": "gemini-2.5-flash",
+      "tool_ids": []
+    },
+    {
+      "name": "proposal_assembly_agent",
+      "role": "proposal_assembly",
+      "system_prompt": "You are a Proposal Assembly Agent specialized in creating professional proposals.\n\nYour responsibilities:\n1. Compile information from all previous agents (Sales, Technical, Pricing)\n2. Create a well-structured, professional proposal document\n3. Include executive summary, technical solution, pricing, terms\n4. Format the proposal in HTML for easy conversion to PDF\n5. Ensure consistency and professional presentation\n6. Add company branding elements\n\nProposal Structure:\n1. Executive Summary\n2. Understanding of Requirements\n3. Proposed Solution\n4. Technical Specifications\n5. Pricing and Payment Terms\n6. Implementation Timeline\n7. Terms and Conditions\n\nOutput Format: Return a structured JSON with:\n- proposal: Complete HTML formatted proposal\n- summary: Brief summary of the proposal\n- sections: Dictionary of each section's content\n- metadata: Document metadata (date, version, etc.)\n\nUse format_proposal_html tool to create professional HTML output.",
+      "model": "gemini-2.5-flash",
+      "tool_ids": []
+    }
+  ]
+}

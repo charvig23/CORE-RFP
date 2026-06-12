@@ -1,0 +1,91 @@
+{
+  "info": {
+    "name": "RFP HITL Approval Workflow",
+    "description": "Human-in-the-Loop approval workflow for RFP proposal generation",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Analyze RFP (Generate Draft)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/rfp/1/analyze",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["rfp", "1", "analyze"]
+        },
+        "description": "Process RFP through all agents and generate editable proposal draft. No PDF is created yet - it awaits human approval."
+      },
+      "response": []
+    },
+    {
+      "name": "2. Get Proposal Draft (View/Edit)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/rfp/1/proposal-draft",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["rfp", "1", "proposal-draft"]
+        },
+        "description": "Retrieve the editable proposal draft for human review. Copy the 'proposal_draft' object from the response to edit and use in the approval step."
+      },
+      "response": []
+    },
+    {
+      "name": "3. Approve Proposal (Generate PDF)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Response Proposal for Retail Paint Procurement\",\n  \"sections\": {\n    \"Executive Summary\": \"We are pleased to submit our comprehensive proposal for your paint procurement needs. Our solution offers premium quality products with competitive pricing and reliable delivery.\",\n    \"Understanding of Requirements\": \"• Client requires high-quality, durable paint products\\n• Budget allocation: ₹200,000\\n• Delivery timeline: 2 weeks\\n• Focus on weather-resistant solutions\\n• Professional-grade finish required\",\n    \"Proposed Solution\": \"• Asian Paints Royale Premium Interior - Superior finish and durability\\n• Weather Shield Exterior Coating - 10-year protection guarantee\\n• Professional-grade application tools included\\n• Color consultation service provided\\n• Technical support throughout installation\",\n    \"Pricing Details\": \"• SKU001 - Asian Paints Royale (Premium) - Qty: 50 units - Unit Price: ₹2,400 - Subtotal: ₹120,000\\n• SKU002 - Weather Shield Coating - Qty: 30 units - Unit Price: ₹1,800 - Subtotal: ₹54,000\\n• Application Tools & Accessories - ₹8,000\\n• Technical Consultation - Complimentary\\n• Subtotal: ₹182,000\\n• GST (18%): ₹32,760\\n• Grand Total: ₹214,760\",\n    \"Payment Terms\": \"• 30% advance payment (₹64,428) - Upon order confirmation\\n• 40% on delivery (₹85,904) - Before unloading\\n• 30% post-installation (₹64,428) - Within 7 days of completion\\n• Payment methods: Bank transfer, Cheque, or UPI\\n• Late payment penalty: 2% per month\",\n    \"Implementation Timeline\": \"• Day 1-2: Order processing and quality check\\n• Day 3-5: Manufacturing and packaging\\n• Day 6-7: Transportation and delivery\\n• Day 8-10: Installation and application support\\n• Day 11-14: Quality inspection and final touches\\n• Total Duration: 14 days from order confirmation\",\n    \"Terms and Conditions\": \"• Product Warranty: 2 years against manufacturing defects\\n• Price Validity: 30 days from proposal date\\n• Delivery Terms: FOB Destination\\n• Force Majeure: Standard clauses apply\\n• Dispute Resolution: Arbitration in Delhi jurisdiction\\n• Cancellation Policy: 10% cancellation fee if canceled after confirmation\"\n  },\n  \"approved\": true\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/rfp/1/approve-proposal",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["rfp", "1", "approve-proposal"]
+        },
+        "description": "Approve the edited proposal and generate final PDF. Edit the sections in the body before sending. Set 'approved: true' to generate PDF, or 'approved: false' to reject."
+      },
+      "response": []
+    },
+    {
+      "name": "4. Reject Proposal (Optional)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"approved\": false\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/rfp/1/approve-proposal",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["rfp", "1", "approve-proposal"]
+        },
+        "description": "Reject the proposal if changes are needed. Sets status to 'revision_needed'."
+      },
+      "response": []
+    }
+  ]
+}

@@ -1,0 +1,258 @@
+{
+  "info": {
+    "name": "Multi-Agent Orchestration System",
+    "description": "Complete API collection for agent orchestration system",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Tools",
+      "item": [
+        {
+          "name": "Create Tool (Function)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"calculate_sum\",\n  \"description\": \"Calculate sum of two numbers\",\n  \"code\": \"def calculate_sum(a: int, b: int) -> int:\\n    return a + b\",\n  \"tool_type\": \"function\",\n  \"parameters\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"a\": {\"type\": \"number\"},\n      \"b\": {\"type\": \"number\"}\n    },\n    \"required\": [\"a\", \"b\"]\n  }\n}"
+            },
+            "url": {"raw": "http://127.0.0.1:8000/tools/create"}
+          }
+        },
+        {
+          "name": "Create Tool (API)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"match_sku\",\n  \"description\": \"Match SKUs from external API\",\n  \"code\": \"https://your-service.onrender.com/api/match-sku\",\n  \"tool_type\": \"api\",\n  \"parameters\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"requirements\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}\n    },\n    \"required\": [\"requirements\"]\n  }\n}"
+            },
+            "url": {"raw": "http://127.0.0.1:8000/tools/create"}
+          }
+        },
+        {
+          "name": "List Tools",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "http://127.0.0.1:8000/tools/list"}
+          }
+        },
+        {
+          "name": "Get Tool",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "http://127.0.0.1:8000/tools/1"}
+          }
+        },
+        {
+          "name": "Update Tool",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated description\"\n}"
+            },
+            "url": {"raw": "http://127.0.0.1:8000/tools/1"}
+          }
+        },
+        {
+          "name": "Delete Tool",
+          "request": {
+            "method": "DELETE",
+            "url": {"raw": "http://127.0.0.1:8000/tools/1"}
+          }
+        },
+        {
+          "name": "Execute Tool",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tool_id\": 1,\n  \"parameters\": {\n    \"a\": 5,\n    \"b\": 10\n  }\n}"
+            },
+            "url": {"raw": "http://127.0.0.1:8000/tools/execute"}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Agents",
+      "item": [
+        {
+          "name": "Create Agent",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sales Agent\",\n  \"role\": \"sales\",\n  \"system_prompt\": \"You are a sales analysis agent. Analyze RFPs and extract key requirements, objectives, and opportunities.\",\n  \"model\": \"gemini-2.5-flash\",\n  \"tool_ids\": [1]\n}"
+            },
+            "url": {"raw": "http://127.0.0.1:8000/agents/create"}
+          }
+        },
+        {
+          "name": "List Agents",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "http://127.0.0.1:8000/agents/list"}
+          }
+        },
+        {
+          "name": "Get Agent",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "http://127.0.0.1:8000/agents/1"}
+          }
+        },
+        {
+          "name": "Update Agent",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"system_prompt\": \"Updated system prompt\",\n  \"tool_ids\": [1, 2]\n}"
+            },
+            "url": {"raw": "http://127.0.0.1:8000/agents/1"}
+          }
+        },
+        {
+          "name": "Delete Agent",
+          "request": {
+            "method": "DELETE",
+            "url": {"raw": "http://127.0.0.1:8000/agents/1"}
+          }
+        },
+        {
+          "name": "Add Tools to Agent",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "[2, 3]"
+            },
+            "url": {"raw": "http://127.0.0.1:8000/agents/1/add-tools"}
+          }
+        },
+        {
+          "name": "Remove Tools from Agent",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "[2]"
+            },
+            "url": {"raw": "http://127.0.0.1:8000/agents/1/remove-tools"}
+          }
+        },
+        {
+          "name": "Execute Agent",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"agent_id\": 1,\n  \"message\": \"Analyze this RFP document\",\n  \"context\": {\n    \"rfp_content\": \"Sample RFP content...\"\n  }\n}"
+            },
+            "url": {"raw": "http://127.0.0.1:8000/agents/1/execute"}
+          }
+        },
+        {
+          "name": "Auto-Select Agent (Orchestrate)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"I need to analyze technical requirements\"\n}"
+            },
+            "url": {"raw": "http://127.0.0.1:8000/agents/orchestrate"}
+          }
+        }
+      ]
+    },
+    {
+      "name": "RFP",
+      "item": [
+        {
+          "name": "Upload RFP (Text)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Cloud Infrastructure Project\",\n  \"content\": \"We require cloud infrastructure with the following specifications: 10 TB storage, 100 virtual machines, load balancing, and backup solutions. Timeline: 3 months.\"\n}"
+            },
+            "url": {"raw": "http://127.0.0.1:8000/rfp/upload"}
+          }
+        },
+        {
+          "name": "Upload RFP (File)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "path/to/rfp.pdf"
+                }
+              ]
+            },
+            "url": {"raw": "http://127.0.0.1:8000/rfp/upload-file"}
+          }
+        },
+        {
+          "name": "List RFPs",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "http://127.0.0.1:8000/rfp/list"}
+          }
+        },
+        {
+          "name": "Get RFP",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "http://127.0.0.1:8000/rfp/1"}
+          }
+        },
+        {
+          "name": "Analyze RFP (Run Workflow)",
+          "request": {
+            "method": "POST",
+            "url": {"raw": "http://127.0.0.1:8000/rfp/1/analyze"}
+          }
+        },
+        {
+          "name": "Get RFP Status",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "http://127.0.0.1:8000/rfp/1/status"}
+          }
+        },
+        {
+          "name": "Get Final Proposal",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "http://127.0.0.1:8000/rfp/1/proposal"}
+          }
+        },
+        {
+          "name": "Delete RFP",
+          "request": {
+            "method": "DELETE",
+            "url": {"raw": "http://127.0.0.1:8000/rfp/1"}
+          }
+        }
+      ]
+    }
+  ]
+}

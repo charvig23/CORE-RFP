@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+python-dotenv
+openai
+google-generativeai
+sqlalchemy
+psycopg2-binary
+pydantic
+requests
+python-multipart
+PyMuPDF
+flask
+flask-cors
+pandas

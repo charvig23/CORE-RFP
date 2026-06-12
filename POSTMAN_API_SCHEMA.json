@@ -1,0 +1,702 @@
+{
+  "info": {
+    "name": "C.O.R.E Agent System - Complete API",
+    "description": "Complete API schema for agents and tools in the C.O.R.E RFP processing system",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Agents API",
+      "item": [
+        {
+          "name": "List All Agents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/agents/list",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["agents", "list"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8000/agents/list",
+                  "protocol": "http",
+                  "host": ["localhost"],
+                  "port": "8000",
+                  "path": ["agents", "list"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": \"uuid-string\",\n    \"name\": \"Sales Agent\",\n    \"role\": \"sales_agent\",\n    \"system_prompt\": \"You are the Sales Agent...\",\n    \"model\": \"gpt-4\",\n    \"temperature\": 0.7,\n    \"created_at\": \"2025-12-12T10:00:00\",\n    \"tools\": []\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Get Agent by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/agents/:agent_id",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["agents", ":agent_id"],
+              "variable": [
+                {
+                  "key": "agent_id",
+                  "value": "uuid-here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Sales Agent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sales Agent\",\n  \"role\": \"sales_agent\",\n  \"system_prompt\": \"You are the Sales Agent responsible for understanding customer requirements from RFP documents. Your role is to:\\n\\n1. **Extract Sales Objectives**: Analyze the RFP text to identify:\\n   - Client company name and industry\\n   - Project scope and requirements\\n   - Key deliverables expected\\n   - Success criteria and KPIs\\n   - Budget constraints (if mentioned)\\n   - Timeline and deadlines\\n   - Stakeholder information\\n\\n2. **Categorize Requirements**: Organize the extracted information into:\\n   - Technical Requirements\\n   - Business Requirements\\n   - Functional Requirements\\n   - Non-functional Requirements\\n\\n3. **Communication**: Present your findings in a clear, structured format that the Technical Agent can use to match SKUs.\\n\\n**CRITICAL WORKFLOW INSTRUCTIONS:**\\n- ALWAYS use the extract_sales_objectives tool when processing RFP text\\n- NEVER provide placeholder or mock data\\n- Your output will determine which agent is called next based on workflow state\\n- The orchestrator will analyze your results using LLM-based routing\\n\\n**Tool Usage:**\\nYou have access to the extract_sales_objectives tool which parses RFP text and returns structured data. Call this tool with the RFP content.\",\n  \"model\": \"gpt-4\",\n  \"temperature\": 0.7\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/agents/create",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["agents", "create"]
+            }
+          }
+        },
+        {
+          "name": "Create Technical Agent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Technical Agent\",\n  \"role\": \"technical_agent\",\n  \"system_prompt\": \"You are the Technical Agent responsible for matching customer requirements with available SKUs. Your role is to:\\n\\n1. **Analyze Requirements**: Review the structured requirements from the Sales Agent\\n\\n2. **SKU Matching**: Use the match_sku and validate_sku tools to:\\n   - Find exact or fuzzy matches for required products/services\\n   - Validate SKU availability\\n   - Get SKU details (name, description, category, price)\\n\\n3. **Technical Validation**: Ensure:\\n   - SKUs meet technical specifications\\n   - Compatibility between selected SKUs\\n   - Coverage of all requirements\\n\\n4. **Documentation**: Provide clear justification for each SKU selection\\n\\n**CRITICAL WORKFLOW INSTRUCTIONS:**\\n- ALWAYS use match_sku tool for finding products\\n- ALWAYS use validate_sku to confirm SKU existence\\n- Your SKU selections will be passed to the Pricing Agent\\n- The orchestrator will intelligently route to the next agent based on your output\\n\\n**Tool Usage:**\\n- match_sku: Finds SKUs matching search terms (fuzzy matching supported)\\n- validate_sku: Validates if a SKU exists and returns details\",\n  \"model\": \"gpt-4\",\n  \"temperature\": 0.5\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/agents/create",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["agents", "create"]
+            }
+          }
+        },
+        {
+          "name": "Create Pricing Agent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pricing Agent\",\n  \"role\": \"pricing_agent\",\n  \"system_prompt\": \"You are the Pricing Agent responsible for calculating costs and generating pricing tables. Your role is to:\\n\\n1. **Cost Calculation**: Use the calculate_total_cost tool to:\\n   - Calculate base costs for all selected SKUs\\n   - Apply quantity multipliers\\n   - Add applicable taxes and fees\\n   - Calculate discounts if any\\n\\n2. **Pricing Table Generation**: Use generate_pricing_table tool to:\\n   - Create professional pricing tables\\n   - Include SKU details, quantities, unit prices\\n   - Show subtotals, taxes, and grand total\\n   - Format for readability\\n\\n3. **Price Optimization**: Suggest:\\n   - Volume discounts\\n   - Bundle offers\\n   - Alternative pricing models\\n\\n**CRITICAL WORKFLOW INSTRUCTIONS:**\\n- ALWAYS use calculate_total_cost for cost calculations\\n- ALWAYS use generate_pricing_table for table formatting\\n- Your pricing output will be used by the Proposal Agent\\n- The orchestrator will route to the next agent based on your results\\n\\n**Tool Usage:**\\n- calculate_total_cost: Computes total costs including taxes/discounts\\n- generate_pricing_table: Creates formatted pricing tables\",\n  \"model\": \"gpt-4\",\n  \"temperature\": 0.3\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/agents/create",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["agents", "create"]
+            }
+          }
+        },
+        {
+          "name": "Create Proposal Agent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Proposal Agent\",\n  \"role\": \"proposal_agent\",\n  \"system_prompt\": \"You are the Proposal Agent responsible for generating the final proposal document. Your role is to:\\n\\n1. **Document Assembly**: Compile all information from previous agents:\\n   - Sales objectives and requirements (from Sales Agent)\\n   - Technical solutions and SKU matches (from Technical Agent)\\n   - Pricing tables and costs (from Pricing Agent)\\n\\n2. **Proposal Formatting**: Use format_proposal_html tool to:\\n   - Create professional HTML proposal\\n   - Include executive summary\\n   - Add technical specifications\\n   - Embed pricing tables\\n   - Include terms and conditions\\n\\n3. **Quality Assurance**: Ensure:\\n   - All requirements are addressed\\n   - Pricing is accurate\\n   - Document is professionally formatted\\n   - Ready for client presentation\\n\\n**CRITICAL WORKFLOW INSTRUCTIONS:**\\n- ALWAYS use format_proposal_html for final document\\n- This is the FINAL step in the workflow\\n- Your output completes the RFP processing\\n- Ensure completeness before submission\\n\\n**Tool Usage:**\\n- format_proposal_html: Generates final HTML proposal document\",\n  \"model\": \"gpt-4\",\n  \"temperature\": 0.4\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/agents/create",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["agents", "create"]
+            }
+          }
+        },
+        {
+          "name": "Update Agent",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Agent Name\",\n  \"system_prompt\": \"Updated system prompt...\",\n  \"model\": \"gpt-4\",\n  \"temperature\": 0.7\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/agents/:agent_id",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["agents", ":agent_id"],
+              "variable": [
+                {
+                  "key": "agent_id",
+                  "value": "uuid-here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Agent",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/agents/:agent_id",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["agents", ":agent_id"],
+              "variable": [
+                {
+                  "key": "agent_id",
+                  "value": "uuid-here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Add Tools to Agent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tool_ids\": [\"tool-uuid-1\", \"tool-uuid-2\"]\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/agents/:agent_id/add-tools",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["agents", ":agent_id", "add-tools"],
+              "variable": [
+                {
+                  "key": "agent_id",
+                  "value": "uuid-here"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Tools API",
+      "item": [
+        {
+          "name": "List All Tools",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/tools/list",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["tools", "list"]
+            }
+          }
+        },
+        {
+          "name": "Get Tool by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/tools/:tool_id",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["tools", ":tool_id"],
+              "variable": [
+                {
+                  "key": "tool_id",
+                  "value": "uuid-here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Tool - extract_sales_objectives",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"extract_sales_objectives\",\n  \"description\": \"Extracts sales objectives, requirements, and key information from RFP text. Analyzes the document to identify client details, project scope, deliverables, timelines, budget constraints, and categorizes requirements into technical, business, and functional categories.\",\n  \"tool_type\": \"api\",\n  \"schema\": {\n    \"type\": \"function\",\n    \"function\": {\n      \"name\": \"extract_sales_objectives\",\n      \"description\": \"Extracts sales objectives, requirements, and key information from RFP text\",\n      \"parameters\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"rfp_text\": {\n            \"type\": \"string\",\n            \"description\": \"The complete RFP document text to analyze\"\n          }\n        },\n        \"required\": [\"rfp_text\"]\n      }\n    }\n  },\n  \"code\": \"http://localhost:8080/api/extract-sales-objectives\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/tools/create",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["tools", "create"]
+            }
+          }
+        },
+        {
+          "name": "Create Tool - match_sku",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"match_sku\",\n  \"description\": \"Matches search terms with available SKUs using fuzzy matching. Returns top matching SKUs with similarity scores, including SKU code, name, description, category, and price.\",\n  \"tool_type\": \"api\",\n  \"schema\": {\n    \"type\": \"function\",\n    \"function\": {\n      \"name\": \"match_sku\",\n      \"description\": \"Matches search terms with available SKUs using fuzzy matching\",\n      \"parameters\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"search_term\": {\n            \"type\": \"string\",\n            \"description\": \"The product or service to search for\"\n          },\n          \"top_n\": {\n            \"type\": \"integer\",\n            \"description\": \"Number of top matches to return (default: 5)\",\n            \"default\": 5\n          }\n        },\n        \"required\": [\"search_term\"]\n      }\n    }\n  },\n  \"code\": \"http://localhost:8080/api/match-sku\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/tools/create",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["tools", "create"]
+            }
+          }
+        },
+        {
+          "name": "Create Tool - validate_sku",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"validate_sku\",\n  \"description\": \"Validates if a SKU exists and returns its complete details including code, name, description, category, and price.\",\n  \"tool_type\": \"api\",\n  \"schema\": {\n    \"type\": \"function\",\n    \"function\": {\n      \"name\": \"validate_sku\",\n      \"description\": \"Validates if a SKU exists and returns its details\",\n      \"parameters\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"sku_code\": {\n            \"type\": \"string\",\n            \"description\": \"The SKU code to validate\"\n          }\n        },\n        \"required\": [\"sku_code\"]\n      }\n    }\n  },\n  \"code\": \"http://localhost:8080/api/validate-sku\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/tools/create",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["tools", "create"]
+            }
+          }
+        },
+        {
+          "name": "Create Tool - calculate_total_cost",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"calculate_total_cost\",\n  \"description\": \"Calculates the total cost for a list of SKUs including quantities, taxes, and discounts. Returns subtotal, tax amount, discount amount, and grand total.\",\n  \"tool_type\": \"api\",\n  \"schema\": {\n    \"type\": \"function\",\n    \"function\": {\n      \"name\": \"calculate_total_cost\",\n      \"description\": \"Calculates total cost including taxes and discounts\",\n      \"parameters\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"skus\": {\n            \"type\": \"array\",\n            \"description\": \"List of SKU items with code and quantity\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"sku_code\": {\"type\": \"string\"},\n                \"quantity\": {\"type\": \"integer\"}\n              },\n              \"required\": [\"sku_code\", \"quantity\"]\n            }\n          },\n          \"tax_rate\": {\n            \"type\": \"number\",\n            \"description\": \"Tax rate as percentage (default: 18.0)\",\n            \"default\": 18.0\n          },\n          \"discount_rate\": {\n            \"type\": \"number\",\n            \"description\": \"Discount rate as percentage (default: 0.0)\",\n            \"default\": 0.0\n          }\n        },\n        \"required\": [\"skus\"]\n      }\n    }\n  },\n  \"code\": \"http://localhost:8080/api/calculate-total-cost\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/tools/create",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["tools", "create"]
+            }
+          }
+        },
+        {
+          "name": "Create Tool - generate_pricing_table",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"generate_pricing_table\",\n  \"description\": \"Generates a formatted pricing table with SKU details, quantities, unit prices, and totals. Returns HTML table ready for inclusion in proposals.\",\n  \"tool_type\": \"api\",\n  \"schema\": {\n    \"type\": \"function\",\n    \"function\": {\n      \"name\": \"generate_pricing_table\",\n      \"description\": \"Generates formatted pricing table\",\n      \"parameters\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"items\": {\n            \"type\": \"array\",\n            \"description\": \"List of items with SKU, name, quantity, price\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"sku\": {\"type\": \"string\"},\n                \"name\": {\"type\": \"string\"},\n                \"quantity\": {\"type\": \"integer\"},\n                \"unit_price\": {\"type\": \"number\"}\n              },\n              \"required\": [\"sku\", \"name\", \"quantity\", \"unit_price\"]\n            }\n          },\n          \"subtotal\": {\"type\": \"number\"},\n          \"tax\": {\"type\": \"number\"},\n          \"total\": {\"type\": \"number\"}\n        },\n        \"required\": [\"items\", \"subtotal\", \"tax\", \"total\"]\n      }\n    }\n  },\n  \"code\": \"http://localhost:8080/api/generate-pricing-table\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/tools/create",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["tools", "create"]
+            }
+          }
+        },
+        {
+          "name": "Create Tool - format_proposal_html",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"format_proposal_html\",\n  \"description\": \"Formats the complete proposal as professional HTML document. Includes executive summary, requirements, technical solutions, pricing, and terms. Returns complete HTML ready for presentation.\",\n  \"tool_type\": \"api\",\n  \"schema\": {\n    \"type\": \"function\",\n    \"function\": {\n      \"name\": \"format_proposal_html\",\n      \"description\": \"Formats complete proposal as HTML document\",\n      \"parameters\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"client_name\": {\"type\": \"string\"},\n          \"project_title\": {\"type\": \"string\"},\n          \"executive_summary\": {\"type\": \"string\"},\n          \"requirements\": {\"type\": \"string\"},\n          \"technical_solution\": {\"type\": \"string\"},\n          \"pricing_table_html\": {\"type\": \"string\"},\n          \"terms\": {\"type\": \"string\"}\n        },\n        \"required\": [\"client_name\", \"project_title\", \"executive_summary\", \"technical_solution\", \"pricing_table_html\"]\n      }\n    }\n  },\n  \"code\": \"http://localhost:8080/api/format-proposal-html\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/tools/create",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["tools", "create"]
+            }
+          }
+        },
+        {
+          "name": "Update Tool",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"updated_tool_name\",\n  \"description\": \"Updated description\",\n  \"tool_type\": \"api\",\n  \"schema\": {},\n  \"code\": \"http://localhost:8080/api/updated-endpoint\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/tools/:tool_id",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["tools", ":tool_id"],
+              "variable": [
+                {
+                  "key": "tool_id",
+                  "value": "uuid-here"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Tool",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/tools/:tool_id",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["tools", ":tool_id"],
+              "variable": [
+                {
+                  "key": "tool_id",
+                  "value": "uuid-here"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Flask Tool Execution API (Port 8080)",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "health"]
+            }
+          }
+        },
+        {
+          "name": "Extract Sales Objectives",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rfp_text\": \"ABC Corporation is seeking a comprehensive cloud migration solution. Project scope includes migrating 50 VMs to Azure, implementing disaster recovery, and providing 24/7 support. Budget: $500,000. Timeline: 6 months. Key deliverables: Migration plan, DR setup, training documentation.\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/extract-sales-objectives",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "extract-sales-objectives"]
+            }
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"rfp_text\": \"Sample RFP text\"\n}"
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/extract-sales-objectives",
+                  "protocol": "http",
+                  "host": ["localhost"],
+                  "port": "8080",
+                  "path": ["api", "extract-sales-objectives"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "body": "{\n  \"status\": \"success\",\n  \"client_info\": {\n    \"company_name\": \"ABC Corporation\",\n    \"industry\": \"Technology\"\n  },\n  \"project_scope\": \"Cloud migration of 50 VMs\",\n  \"deliverables\": [\"Migration plan\", \"DR setup\", \"Training\"],\n  \"budget\": \"$500,000\",\n  \"timeline\": \"6 months\",\n  \"requirements\": {\n    \"technical\": [\"Azure migration\", \"Disaster recovery\"],\n    \"business\": [\"24/7 support\"],\n    \"functional\": [\"VM migration\", \"Training documentation\"]\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Match SKU",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"search_term\": \"cloud migration\",\n  \"top_n\": 5\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/match-sku",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "match-sku"]
+            }
+          }
+        },
+        {
+          "name": "Validate SKU",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sku_code\": \"SKU-001\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/validate-sku",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "validate-sku"]
+            }
+          }
+        },
+        {
+          "name": "Calculate Total Cost",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"skus\": [\n    {\"sku_code\": \"SKU-001\", \"quantity\": 10},\n    {\"sku_code\": \"SKU-002\", \"quantity\": 5}\n  ],\n  \"tax_rate\": 18.0,\n  \"discount_rate\": 5.0\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/calculate-total-cost",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "calculate-total-cost"]
+            }
+          }
+        },
+        {
+          "name": "Generate Pricing Table",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"sku\": \"SKU-001\",\n      \"name\": \"Cloud Migration Service\",\n      \"quantity\": 10,\n      \"unit_price\": 5000.0\n    },\n    {\n      \"sku\": \"SKU-002\",\n      \"name\": \"Disaster Recovery Setup\",\n      \"quantity\": 1,\n      \"unit_price\": 25000.0\n    }\n  ],\n  \"subtotal\": 75000.0,\n  \"tax\": 13500.0,\n  \"total\": 88500.0\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/generate-pricing-table",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "generate-pricing-table"]
+            }
+          }
+        },
+        {
+          "name": "Format Proposal HTML",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"client_name\": \"ABC Corporation\",\n  \"project_title\": \"Cloud Migration Project\",\n  \"executive_summary\": \"This proposal outlines a comprehensive cloud migration solution...\",\n  \"requirements\": \"The client requires migration of 50 VMs, disaster recovery, and support.\",\n  \"technical_solution\": \"We propose Azure-based migration with automated DR and 24/7 monitoring.\",\n  \"pricing_table_html\": \"<table>...</table>\",\n  \"terms\": \"Payment terms: Net 30. Project duration: 6 months.\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/format-proposal-html",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "format-proposal-html"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Workflow Execution",
+      "item": [
+        {
+          "name": "Create RFP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Cloud Migration Project\",\n  \"content\": \"ABC Corporation is seeking a comprehensive cloud migration solution...\",\n  \"client_name\": \"ABC Corporation\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/rfp/create",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["rfp", "create"]
+            }
+          }
+        },
+        {
+          "name": "Execute Workflow Step",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rfp_id\": \"uuid-of-rfp\",\n  \"agent_role\": \"sales_agent\",\n  \"user_input\": \"Please analyze this RFP and extract sales objectives\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8000/workflow/execute",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8000",
+              "path": ["workflow", "execute"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
