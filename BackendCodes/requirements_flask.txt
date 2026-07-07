@@ -1,5 +1,6 @@
-flask==3.0.0
-flask-cors==4.0.0
-pandas==2.1.4
-xhtml2pdf==0.2.13
-reportlab==4.4.6
+flask
+flask-cors
+pandas
+reportlab
+httpx
+python-dotenv

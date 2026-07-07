@@ -1,0 +1,15 @@
+REQUEST FOR PROPOSAL - IT Infrastructure Upgrade
+
+Company: ABC Corporation
+Project: Office Network Upgrade
+
+Requirements:
+- 50 laptop computers for employees
+- Network switches and routers for 3 floors
+- Wireless access points throughout the office
+- Server for file storage
+- IT support and installation services
+
+Budget: $150,000
+Timeline: 3 months
+Contact: john@abccorp.com

@@ -1,11 +1,21 @@
-sku_code,product_name,description,category,type,tags
-SKU001,Premium Exterior Emulsion,High-quality weather-resistant emulsion paint for outer walls,Paint,Emulsion,exterior outer walls premium weather resistant
-SKU002,Interior Wall Primer,Base coat primer for interior walls and ceilings,Paint,Primer,interior walls ceiling base coat
-SKU003,Exterior Wall Sealer,Waterproofing sealer for exterior surfaces,Paint,Sealer,exterior walls waterproof sealer
-SKU004,Luxury Interior Emulsion,Smooth finish emulsion for living spaces,Paint,Emulsion,interior luxury smooth finish living room
-SKU005,Wood Varnish Clear,Protective clear varnish for wood surfaces,Paint,Varnish,wood varnish clear protective
-SKU006,Metal Enamel Red,Rust-resistant enamel paint for metal surfaces,Paint,Enamel,metal enamel red rust resistant
-SKU007,Exterior Primer White,Weather-proof primer for exterior walls,Paint,Primer,exterior white primer weather proof
-SKU008,Interior Ceiling Paint,Specialized paint for interior ceilings,Paint,Emulsion,interior ceiling white smooth
-SKU009,Exterior Texture Paint,Textured coating for exterior walls,Paint,Texture,exterior texture walls coating
-SKU010,Wood Stain Brown,Decorative stain for wooden surfaces,Paint,Stain,wood brown stain decorative
+sku,product_name,category,description,tags
+LAP-001,Business Laptop 15inch,laptops,High performance business laptop,laptop computer portable windows
+LAP-002,Budget Laptop 14inch,laptops,Affordable laptop for basic use,laptop computer budget portable
+LAP-003,Gaming Laptop 17inch,laptops,High performance gaming laptop,laptop gaming computer portable
+NET-001,Network Switch 24 Port,networking,Managed network switch 24 ports,switch network ethernet ports managed
+NET-002,Wireless Router Enterprise,networking,Enterprise grade wireless router,router wireless network wifi enterprise
+NET-003,Wireless Access Point,networking,High speed wireless access point,access point wifi wireless ceiling
+NET-004,Network Cable Cat6,networking,Cat6 ethernet cable bulk,cable ethernet network cat6 wiring
+SRV-001,File Server Tower,servers,Tower server for file storage,server storage file tower rack
+SRV-002,NAS Storage Device,servers,Network attached storage device,nas storage network file backup
+SRV-003,Rack Server 2U,servers,2U rack mounted server,server rack 2u enterprise datacenter
+SVC-001,IT Support Package Basic,services,Basic IT support and installation,support installation service it helpdesk
+SVC-002,IT Support Package Premium,services,Premium IT support with 24/7 coverage,support installation service it premium 24x7
+SVC-003,Network Setup Service,services,Complete network setup and configuration,network setup configuration installation service
+ACC-001,Laptop Bag,accessories,Professional laptop carrying bag,bag laptop accessories carry professional
+ACC-002,Wireless Mouse,accessories,Ergonomic wireless mouse,mouse wireless ergonomic accessories
+ACC-003,USB Hub 7 Port,accessories,7 port USB hub,usb hub port accessories connectivity
+MON-001,Monitor 24inch FHD,monitors,24 inch full HD monitor,monitor display screen 24inch fullhd
+MON-002,Monitor 27inch 4K,monitors,27 inch 4K UHD monitor,monitor display screen 27inch 4k uhd
+PRN-001,Laser Printer,printers,Black and white laser printer,printer laser black white office
+PRN-002,Color Printer,printers,Color inkjet printer,printer color inkjet office
